@@ -1,6 +1,6 @@
 import React from 'react';
 import Sidebar from './components/Sidebar';
-// import Chat from './components/Chat';
+import Chat from './components/Chat';
 import './App.css';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <div className="app">
       <div className="app_body">
         <Sidebar/>
-        {/* <Chat/> */}
+        <Chat/>
             {/* <Router>
               <Sidebar/>
               <Switch>
