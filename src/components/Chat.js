@@ -9,24 +9,21 @@ import MicIcon from '@material-ui/icons/Mic';
 import './chat.css';
 import db from '../firebase';
 import firebase from 'firebase';
-// import {useStateValue} from "../StateProvider";
+import {useStateValue} from "../StateProvider";
 
 function Chat() {
-
     const [seed, setSeed] = useState('');
     const [input, setInput] = useState('');
-
     //Show messages based on the room
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState('');
     const [messages, setMessages] = useState([]);
-    // const [{user}, dispatch ] = useStateValue();
-
+    const [{user}, dispatch ] = useStateValue();
     //Depends on our roomId , change the room
     useEffect(() => {
         if(roomId) {
             //inside the rooms, going to the specific doc, which in specific room and use that roomId 
-            db.collection('rooms').doc(roomId).onSnapshot((snapshot) => { //when get a snapchat, use that room name
+            db.collection('rooms').doc(roomId).onSnapshot((snapshot) => { //when gat a snapchat, use that room name
                 setRoomName(snapshot.data().name) //it will get inside and pull that data
             });
 
@@ -40,11 +37,16 @@ function Chat() {
     /* Random user*/
     useEffect(()=>{
         setSeed(Math.floor(Math.random()* 5000));
-    }, []); //everytime when roomId changes
+    }, [roomId]); //everytime when roomId changes
 
     const sendMessage = (e) => {
         e.preventDefault(); /* stop from refreshing  */
-        
+        /* Add messages to db */
+        db.collection('rooms').doc(roomId).collection('messages').add({
+            message: input,
+            name: user.displayName, /* from google autentificacion user.displayName */
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),/* time from the server */
+        })
         setInput('');
     }
 
@@ -54,9 +56,13 @@ function Chat() {
                 <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
 
                 <div className="chat__headerInfo">
-                <h3>{roomName}</h3>
+                    <h3>{roomName}</h3>
                     <p>
-                        Last seen
+                        Last seen {" "}
+                        {/* from last message */}
+                        {new Date(
+                            messages[messages.length - 1]?.timestamp?.toDate()
+                        ).toUTCString()}
                     </p>
                 </div>
 
@@ -74,20 +80,22 @@ function Chat() {
             </div>
 
             <div className="chat__body">
-                <p className={`chat__message ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Viktoria Leseiko</span>
-                        Hey there!
+                {messages.map(message=> (
+                    <p className={`chat__message ${message.name === user.displayName && 'chat__receiver'}`}>{/* messages will appear depends on user name on data */}
+                    <span className='chat__name'>{message.name}</span>
+                        {message.message}
                     <span className='chat__timestamp'>
-                        3:52pm
+                        {new Date(message.timestamp?.toDate()).toUTCString()} {/* SHOW REAL */}
                     </span>
-                </p>
+                    </p>
+                ))}
             </div>
 
             <div className="chat__footer">
-            <InsertEmoticonIcon />
+                <InsertEmoticonIcon />
                     <form>
-                        <input value={input} onChange={e => setInput(e.target.value)} type="text" placeholder='Type a message'/>
-                        <button type='submit'>Send a message</button>
+                        <input onChange={e=>setInput(e.target.value)} value={input} type="text" placeholder='Type a message'/>
+                        <button onClick={sendMessage} type='submit'>Send a message</button>
                     </form>
                 <MicIcon />
             </div>
