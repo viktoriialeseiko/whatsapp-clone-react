@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './sidebarChat.css';
 import { Avatar } from "@material-ui/core";
+import db from '../firebase';
 
 function SidebarChat( {addNewChat, id, name} ) {
 
@@ -16,9 +17,9 @@ function SidebarChat( {addNewChat, id, name} ) {
 
         if(roomName){
             //push information to database
-            // db.collection('rooms').add({
-            //     name: roomName,
-            // })
+            db.collection('rooms').add({
+                name: roomName,
+            })
         }
     };
 
