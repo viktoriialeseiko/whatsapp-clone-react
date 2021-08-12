@@ -13,11 +13,18 @@ import './chat.css';
 
 function Chat() {
     const [seed, setSeed] = useState('');
+    const [input, setInput] = useState('');
 
     /* Random user*/
     useEffect(()=>{
         setSeed(Math.floor(Math.random()* 5000));
     }, []); //everytime when roomId changes
+
+    const sendMessage = (e) => {
+        e.preventDefault(); /* stop from refreshing  */
+        
+        setInput('');
+    }
 
     return (
         <div className='chat'>
@@ -47,7 +54,7 @@ function Chat() {
             <div className="chat__body">
                 <p className={`chat__message ${true && 'chat__receiver'}`}>
                     <span className='chat__name'>Viktoria Leseiko</span>
-                        Hey Guys!
+                        Hey there!
                     <span className='chat__timestamp'>
                         3:52pm
                     </span>
@@ -57,7 +64,7 @@ function Chat() {
             <div className="chat__footer">
             <InsertEmoticonIcon />
                     <form>
-                        <input type="text" placeholder='Type a message'/>
+                        <input value={input} onChange={e => setInput(e.target.value)} type="text" placeholder='Type a message'/>
                         <button type='submit'>Send a message</button>
                     </form>
                 <MicIcon />
