@@ -1,6 +1,6 @@
 # WhatsApp Clone
 
-## Working url: http://localhost:5000/
+## Working url: https://whattsapp-clone-react.netlify.app/
 
 <img width="713" alt="whatsapp" src="https://user-images.githubusercontent.com/74892817/122613483-ebfc2c80-d052-11eb-9d00-41688bd1dc66.png">
 
